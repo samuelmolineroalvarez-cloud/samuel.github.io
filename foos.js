@@ -7,16 +7,22 @@ const xValue = document.getElementById("xValue");
 const yValue = document.getElementById("yValue");
 const zValue = document.getElementById("zValue");
 
-const movementValue = document.getElementById("movementValue");
-const movementStatus = document.getElementById("movementStatus");
+const ball = document.getElementById("ball");
+const gameArea = document.getElementById("gameArea");
 
 let sensorActive = false;
+
+
+// Initial position of the ball
+let ballX = 50;
+let ballY = 50;
 
 
 // Start / stop the sensor
 startButton.addEventListener("click", async () => {
 
-    // Some browsers require permission before using motion sensors
+    // Some browsers, especially iOS Safari,
+    // require permission to use motion sensors.
     if (
         typeof DeviceMotionEvent !== "undefined" &&
         typeof DeviceMotionEvent.requestPermission === "function"
@@ -44,6 +50,7 @@ startButton.addEventListener("click", async () => {
         }
     }
 
+
     if (!sensorActive) {
 
         window.addEventListener(
@@ -54,6 +61,7 @@ startButton.addEventListener("click", async () => {
         sensorActive = true;
 
         startButton.textContent = "Stop Sensor";
+
         statusText.textContent = "Active";
 
     } else {
@@ -66,26 +74,24 @@ startButton.addEventListener("click", async () => {
         sensorActive = false;
 
         startButton.textContent = "Start Sensor";
+
         statusText.textContent = "Inactive";
-
-        xValue.textContent = "0.00";
-        yValue.textContent = "0.00";
-        zValue.textContent = "0.00";
-
-        movementValue.textContent = "0.00";
-        movementStatus.textContent = "Phone is still";
     }
 });
 
 
-// Function executed whenever the phone moves
+// This function is called every time
+// the phone detects movement.
 function handleMotion(event) {
 
-    const acceleration = event.accelerationIncludingGravity;
+    const acceleration =
+        event.accelerationIncludingGravity;
+
 
     if (!acceleration) {
         return;
     }
+
 
     const x = acceleration.x || 0;
     const y = acceleration.y || 0;
@@ -98,33 +104,41 @@ function handleMotion(event) {
     zValue.textContent = z.toFixed(2);
 
 
-    // Calculate total acceleration
-    const magnitude = Math.sqrt(
-        x * x +
-        y * y +
-        z * z
-    );
+    /*
+        Convert the phone's movement into
+        movement of the ball.
+
+        X controls horizontal movement.
+        Y controls vertical movement.
+    */
+
+    ballX += x * 0.8;
+    ballY -= y * 0.8;
 
 
-    movementValue.textContent =
-        magnitude.toFixed(2);
+    // Keep the ball inside the game area
 
-
-    // Determine movement level
-    if (magnitude < 10.5) {
-
-        movementStatus.textContent =
-            "Phone is still";
-
-    } else if (magnitude < 13) {
-
-        movementStatus.textContent =
-            "Phone is moving";
-
-    } else {
-
-        movementStatus.textContent =
-            "Phone is shaking!";
+    if (ballX < 5) {
+        ballX = 5;
     }
+
+    if (ballX > 95) {
+        ballX = 95;
+    }
+
+    if (ballY < 7) {
+        ballY = 7;
+    }
+
+    if (ballY > 93) {
+        ballY = 93;
+    }
+
+
+    // Move the ball on the screen
+
+    ball.style.left = ballX + "%";
+    ball.style.top = ballY + "%";
 }
 ```
+
