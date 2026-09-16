@@ -1,2 +1,59 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Phone Motion</title> <link rel="stylesheet" href="style.css"> </head> <body> <div class="container"> <h1>📱 Phone Motion</h1> <p> Move your phone and watch the ball move on the screen. </p> <button id="startButton"> Start Sensor </button> <p> Status: <strong id="statusText">Inactive</strong> </p> <!-- Area where the ball moves --> <div id="gameArea"> <div id="ball"></div> </div> <!-- Sensor values --> <div class="values"> <div> <strong>X</strong> <span id="xValue">0.00</span> </div> <div> <strong>Y</strong> <span id="yValue">0.00</span> </div> <div> <strong>Z</strong> <span id="zValue">0.00</span> </div> </div> </div> <script src="script.js"></script> </body> </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Phone Motion</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📱 Phone Motion</h1>
+
+        <p>
+            Tilt your phone and move the ball.
+        </p>
+
+        <button id="startButton">
+            Start Sensor
+        </button>
+
+        <p>
+            Status:
+            <strong id="statusText">Inactive</strong>
+        </p>
+
+        <div id="gameArea">
+            <div id="ball"></div>
+        </div>
+
+        <div class="values">
+
+            <div>
+                <strong>Beta</strong>
+                <span id="betaValue">0°</span>
+            </div>
+
+            <div>
+                <strong>Gamma</strong>
+                <span id="gammaValue">0°</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
+```
 
