@@ -1,11 +1,9 @@
 ```javascript
 const startButton = document.getElementById("startButton");
-
 const statusText = document.getElementById("statusText");
 
-const xValue = document.getElementById("xValue");
-const yValue = document.getElementById("yValue");
-const zValue = document.getElementById("zValue");
+const betaValue = document.getElementById("betaValue");
+const gammaValue = document.getElementById("gammaValue");
 
 const ball = document.getElementById("ball");
 const gameArea = document.getElementById("gameArea");
@@ -13,29 +11,23 @@ const gameArea = document.getElementById("gameArea");
 let sensorActive = false;
 
 
-// Initial position of the ball
-let ballX = 50;
-let ballY = 50;
-
-
-// Start / stop the sensor
+// Start sensor
 startButton.addEventListener("click", async () => {
 
-    // Some browsers, especially iOS Safari,
-    // require permission to use motion sensors.
+    // iPhone / iPad require permission
     if (
-        typeof DeviceMotionEvent !== "undefined" &&
-        typeof DeviceMotionEvent.requestPermission === "function"
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
     ) {
 
         try {
 
             const permission =
-                await DeviceMotionEvent.requestPermission();
+                await DeviceOrientationEvent.requestPermission();
 
             if (permission !== "granted") {
 
-                alert("Permission to access the motion sensor was denied.");
+                alert("Motion sensor permission was denied.");
 
                 return;
             }
@@ -54,91 +46,81 @@ startButton.addEventListener("click", async () => {
     if (!sensorActive) {
 
         window.addEventListener(
-            "devicemotion",
-            handleMotion
+            "deviceorientation",
+            handleOrientation
         );
 
         sensorActive = true;
 
         startButton.textContent = "Stop Sensor";
-
         statusText.textContent = "Active";
 
     } else {
 
         window.removeEventListener(
-            "devicemotion",
-            handleMotion
+            "deviceorientation",
+            handleOrientation
         );
 
         sensorActive = false;
 
         startButton.textContent = "Start Sensor";
-
         statusText.textContent = "Inactive";
     }
 });
 
 
-// This function is called every time
-// the phone detects movement.
-function handleMotion(event) {
+// Called whenever the phone orientation changes
+function handleOrientation(event) {
 
-    const acceleration =
-        event.accelerationIncludingGravity;
+    const beta = event.beta;
+    const gamma = event.gamma;
 
-
-    if (!acceleration) {
+    if (beta === null || gamma === null) {
         return;
     }
 
 
-    const x = acceleration.x || 0;
-    const y = acceleration.y || 0;
-    const z = acceleration.z || 0;
-
-
     // Display sensor values
-    xValue.textContent = x.toFixed(2);
-    yValue.textContent = y.toFixed(2);
-    zValue.textContent = z.toFixed(2);
+
+    betaValue.textContent =
+        beta.toFixed(1) + "°";
+
+    gammaValue.textContent =
+        gamma.toFixed(1) + "°";
 
 
     /*
-        Convert the phone's movement into
-        movement of the ball.
+        Gamma controls horizontal movement.
 
-        X controls horizontal movement.
-        Y controls vertical movement.
+        -90° = completely left
+         0°  = horizontal
+        +90° = completely right
     */
 
-    ballX += x * 0.8;
-    ballY -= y * 0.8;
+    let x = 50 + (gamma / 90) * 45;
 
 
-    // Keep the ball inside the game area
+    /*
+        Beta controls vertical movement.
 
-    if (ballX < 5) {
-        ballX = 5;
-    }
+        -180° to +180°
+    */
 
-    if (ballX > 95) {
-        ballX = 95;
-    }
-
-    if (ballY < 7) {
-        ballY = 7;
-    }
-
-    if (ballY > 93) {
-        ballY = 93;
-    }
+    let y = 50 + (beta / 180) * 45;
 
 
-    // Move the ball on the screen
+    // Keep the ball inside the screen
 
-    ball.style.left = ballX + "%";
-    ball.style.top = ballY + "%";
+    x = Math.max(5, Math.min(95, x));
+    y = Math.max(5, Math.min(95, y));
+
+
+    // Move the ball
+
+    ball.style.left = x + "%";
+    ball.style.top = y + "%";
 }
 ```
+
 
